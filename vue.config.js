@@ -1,5 +1,7 @@
 const path = require('path');
 module.exports = {
+  //关闭eslint检查
+  lintOnSave: false,
   // 基本路径
   publicPath: process.env.NODE_ENV === 'production' ? '' : '/',
   // 输出文件目录
@@ -9,8 +11,7 @@ module.exports = {
   /**
    * webpack配置,see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
    **/
-  chainWebpack: (config) => {
-  },
+  chainWebpack: (config) => {},
   configureWebpack: (config) => {
     // config.resolve = { // 配置解析别名
     //   extensions: ['.js', '.json', '.vue'],
@@ -36,12 +37,12 @@ module.exports = {
     // css预设器配置项
     loaderOptions: {
       // 如发现 css.modules 报错，请查看这里：http://www.web-jshtml.cn/#/detailed?id=12
-      sass: { 
-        prependData:`@import "./src/assets/styles/main.scss";`
+      sass: {
+        prependData: `@import "./src/assets/styles/main.scss";`
       }
     },
     // 启用 CSS modules for all css / pre-processor files.
-    modules: false
+    requireModuleExtension: false
   },
   // use thread-loader for babel & TS in production build
   // enabled by default if the machine has more than 1 cores
@@ -63,8 +64,7 @@ module.exports = {
       warnings: true,
       errors: true
     },
-    before: app => {
-    }
+    before: app => {}
   },
   /**
    * 第三方插件配置

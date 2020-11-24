@@ -1,13 +1,11 @@
 const path = require('path');
 module.exports = {
-  //关闭eslint检查
-  lintOnSave: false,
   // 基本路径
   publicPath: process.env.NODE_ENV === 'production' ? '' : '/',
   // 输出文件目录
   outputDir: process.env.NODE_ENV === 'production' ? 'dist' : 'devdist',
   // eslint-loader 是否在保存的时候检查
-  lintOnSave: true,
+  lintOnSave: false,
   /**
    * webpack配置,see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
    **/
@@ -33,16 +31,16 @@ module.exports = {
     // 是否使用css分离插件 ExtractTextPlugin
     extract: true,
     // 开启 CSS source maps?
-    sourceMap: false,
+    // sourceMap: false,
     // css预设器配置项
-    loaderOptions: {
-      // 如发现 css.modules 报错，请查看这里：http://www.web-jshtml.cn/#/detailed?id=12
-      sass: {
-        prependData: `@import "./src/assets/styles/main.scss";`
-      }
-    },
+    // loaderOptions: {
+    //   // 如发现 css.modules 报错，请查看这里：http://www.web-jshtml.cn/#/detailed?id=12
+    //   sass: {
+    //     prependData: `@import "./src/assets/styles/main.scss";`
+    //   }
+    // },
     // 启用 CSS modules for all css / pre-processor files.
-    requireModuleExtension: false
+    // requireModuleExtension: false
   },
   // use thread-loader for babel & TS in production build
   // enabled by default if the machine has more than 1 cores

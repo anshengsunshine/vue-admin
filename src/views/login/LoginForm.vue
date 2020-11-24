@@ -1,0 +1,145 @@
+<template>
+  <el-form
+    :model="ruleForm"
+    status-icon
+    :rules="rules"
+    ref="ruleForm"
+    class="login_form"
+    size="medium"
+  >
+    <el-form-item prop="username" class="item_form">
+      <label>邮箱</label>
+      <el-input
+        type="text"
+        v-model="ruleForm.username"
+        autocomplete="off"
+      ></el-input>
+    </el-form-item>
+
+    <el-form-item prop="password" class="item_form">
+      <label>密码</label>
+      <el-input
+        type="password"
+        v-model="ruleForm.password"
+        autocomplete="off"
+        minlength="6"
+        maxlength="20"
+      ></el-input>
+    </el-form-item>
+
+    <el-form-item prop="code">
+      <label>验证码</label>
+      <el-row :gutter="20">
+        <el-col :span="15">
+          <el-input
+            v-model.number="ruleForm.code"
+            minlength="6"
+            maxlength="6"
+          ></el-input>
+        </el-col>
+        <el-col :span="9">
+          <el-button type="success" class="block">获取验证码</el-button>
+        </el-col>
+      </el-row>
+    </el-form-item>
+
+    <el-form-item>
+      <el-button
+        type="danger"
+        @click="submitForm('ruleForm')"
+        class="login_btn block"
+        >提交</el-button
+      >
+    </el-form-item>
+  </el-form>
+</template>
+
+<script>
+export default {
+  name: "LoginForm",
+  data() {
+    /**
+     * 校验用户名
+     */
+    var validateUsername = (rule, value, callback) => {
+      let reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+      if (value === "") {
+        callback(new Error("请输入用户名"));
+      } else if (!reg.test(value)) {
+        callback(new Error("用户名格式有误!"));
+      } else {
+        callback();
+      }
+    };
+    /**
+     * 校验密码
+     */
+    var validatePassword = (rule, value, callback) => {
+      let reg = /^(?!\D+$)(?![^a-zA-Z]+$)\S{6,20}$/;
+      if (value === "") {
+        callback(new Error("请输入密码"));
+      } else if (!reg.test(value)) {
+        callback(new Error("密码为6-20位的数字和字母!"));
+      } else {
+        callback();
+      }
+    };
+    /**
+     * 校验验证码
+     */
+    var validateCode = (rule, value, callback) => {
+      let reg = /^[a-z0-9]{6}$/
+      if (!value) {
+        return callback(new Error("验证码不能为空"));
+      }else if(!reg.test(value)){
+        return callback(new Error("验证码格式有误"))
+      }
+    };
+    return {
+      ruleForm: {
+        username: "",
+        password: "",
+        code: "",
+      },
+      rules: {
+        username: [{ validator: validateUsername, trigger: "blur" }],
+        password: [{ validator: validatePassword, trigger: "blur" }],
+        code: [{ validator: validateCode, trigger: "blur" }],
+      },
+    };
+  },
+  methods: {
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          alert("submit!");
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.login_form {
+  margin-top: 29px;
+  label {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 14px;
+    color: #fff;
+  }
+  .item_form {
+    margin-bottom: 13px;
+  }
+  .login_btn {
+  }
+  .block {
+    width: 100%;
+    display: block;
+  }
+}
+</style>

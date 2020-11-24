@@ -19,7 +19,7 @@
     <el-form-item prop="password" class="item_form">
       <label>密码</label>
       <el-input
-        type="password"
+        type="text"
         v-model="ruleForm.password"
         autocomplete="off"
         minlength="6"
@@ -55,6 +55,12 @@
 </template>
 
 <script>
+import {
+  stripscript,
+  validateEmail,
+  validatePass,
+  validateVCode,
+} from "@/utils/validate";
 export default {
   name: "LoginForm",
   data() {
@@ -62,10 +68,9 @@ export default {
      * 校验用户名
      */
     var validateUsername = (rule, value, callback) => {
-      let reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
       if (value === "") {
         callback(new Error("请输入用户名"));
-      } else if (!reg.test(value)) {
+      } else if (validateEmail(value)) {
         callback(new Error("用户名格式有误!"));
       } else {
         callback();
@@ -75,10 +80,11 @@ export default {
      * 校验密码
      */
     var validatePassword = (rule, value, callback) => {
-      let reg = /^(?!\D+$)(?![^a-zA-Z]+$)\S{6,20}$/;
+      this.ruleForm.password = stripscript(value);
+      value = this.ruleForm.password;
       if (value === "") {
         callback(new Error("请输入密码"));
-      } else if (!reg.test(value)) {
+      } else if (validatePass(value)) {
         callback(new Error("密码为6-20位的数字和字母!"));
       } else {
         callback();
@@ -88,11 +94,10 @@ export default {
      * 校验验证码
      */
     var validateCode = (rule, value, callback) => {
-      let reg = /^[a-z0-9]{6}$/
       if (!value) {
         return callback(new Error("验证码不能为空"));
-      }else if(!reg.test(value)){
-        return callback(new Error("验证码格式有误"))
+      } else if (validateVCode(value)) {
+        return callback(new Error("验证码格式有误"));
       }
     };
     return {

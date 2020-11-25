@@ -27,6 +27,21 @@
       ></el-input>
     </el-form-item>
 
+    <el-form-item
+      prop="passwords"
+      class="item_form"
+      v-show="model === 'register'"
+    >
+      <label>重复密码</label>
+      <el-input
+        type="text"
+        v-model="ruleForm.passwords"
+        autocomplete="off"
+        minlength="6"
+        maxlength="20"
+      ></el-input>
+    </el-form-item>
+
     <el-form-item prop="code">
       <label>验证码</label>
       <el-row :gutter="20">
@@ -63,6 +78,12 @@ import {
 } from "@/utils/validate";
 export default {
   name: "LoginForm",
+  props: {
+    model: {
+      type: String,
+      default: "login",
+    },
+  },
   data() {
     /**
      * 校验用户名
@@ -91,6 +112,24 @@ export default {
       }
     };
     /**
+     * 校验重复密码
+     */
+    var validatePasswords = (rule, value, callback) => {
+      // 如果模块值为login，验证直接通过
+      if (this.model === "login") {
+        callback();
+      }
+      this.ruleForm.passwords = stripscript(value);
+      value = this.ruleForm.passwords;
+      if (value === "") {
+        callback(new Error("请再次输入密码"));
+      } else if (value != this.ruleForm.password) {
+        callback(new Error("两次密码输入不一致!"));
+      } else {
+        callback();
+      }
+    };
+    /**
      * 校验验证码
      */
     var validateCode = (rule, value, callback) => {
@@ -98,19 +137,23 @@ export default {
         return callback(new Error("验证码不能为空"));
       } else if (validateVCode(value)) {
         return callback(new Error("验证码格式有误"));
+      } else {
+        callback();
       }
     };
     return {
       ruleForm: {
         username: "",
         password: "",
+        passwords: "",
         code: "",
-      },
+      }, // 表单的数据
       rules: {
         username: [{ validator: validateUsername, trigger: "blur" }],
         password: [{ validator: validatePassword, trigger: "blur" }],
+        passwords: [{ validator: validatePasswords, trigger: "blur" }],
         code: [{ validator: validateCode, trigger: "blur" }],
-      },
+      }, // 表单数据的校验规则
     };
   },
   methods: {

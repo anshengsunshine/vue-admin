@@ -11,7 +11,7 @@
           {{ item.txt }}
         </li>
       </ul>
-      <login-from />
+      <login-from :model="model" />
     </div>
   </div>
 </template>
@@ -24,9 +24,10 @@ export default {
   },
   data() {
     return {
+      model: "login",
       menuTab: [
-        { txt: "登录", isCurrent: true },
-        { txt: "注册", isCurrent: false },
+        { txt: "登录", isCurrent: true, type: "login" },
+        { txt: "注册", isCurrent: false, type: "register" },
       ],
       currentIndex: 0,
     };
@@ -37,7 +38,8 @@ export default {
       this.menuTab.forEach((item) => {
         item.isCurrent = false;
       });
-      data.isCurrent = true;
+      data.isCurrent = true; // 选中高亮
+      this.model = data.type; // 当前选中的注册/登录
     },
   },
 };

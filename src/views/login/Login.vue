@@ -65,7 +65,9 @@
               ></el-input>
             </el-col>
             <el-col :span="9">
-              <el-button type="success" class="block">获取验证码</el-button>
+              <el-button type="success" class="block" @click="getSms()"
+                >获取验证码</el-button
+              >
             </el-col>
           </el-row>
         </el-form-item>
@@ -83,6 +85,7 @@
   </div>
 </template>
 <script>
+import { GetSms } from "@/api/login";
 import { reactive, ref, onMounted } from "@vue/composition-api";
 import {
   stripscript,
@@ -172,6 +175,9 @@ export default {
       code: [{ validator: validateCode, trigger: "blur" }],
     });
 
+    /**
+     * 改变登录/注册选中
+     */
     const toggleMenu = (data) => {
       menuTab.forEach((item) => {
         item.isCurrent = false;
@@ -180,6 +186,9 @@ export default {
       model.value = data.type; // 当前选中的注册/登录
     };
 
+    /**
+     * 提交表单
+     */
     const submitForm = (formName) => {
       context.refs[formName].validate((valid) => {
         if (valid) {
@@ -191,6 +200,15 @@ export default {
       });
     };
 
+    /**
+     * 获取验证码
+     */
+    const getSms = () => {
+      GetSms({ username: ruleForm.username });
+    };
+
+    onMounted(() => {});
+
     return {
       menuTab,
       model,
@@ -198,11 +216,12 @@ export default {
       rules,
       toggleMenu,
       submitForm,
+      getSms,
     };
   },
 };
 </script>
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 #login {
   height: 100vh;
   background-color: #344a5f;

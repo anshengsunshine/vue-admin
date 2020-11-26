@@ -70,6 +70,7 @@
 </template>
 
 <script>
+import { reactive, ref, onMounted } from "@vue/composition-api";
 import {
   stripscript,
   validateEmail,
@@ -84,11 +85,11 @@ export default {
       default: "login",
     },
   },
-  data() {
+  setup(props, context) {
     /**
      * 校验用户名
      */
-    var validateUsername = (rule, value, callback) => {
+    let validateUsername = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入用户名"));
       } else if (validateEmail(value)) {
@@ -100,9 +101,9 @@ export default {
     /**
      * 校验密码
      */
-    var validatePassword = (rule, value, callback) => {
-      this.ruleForm.password = stripscript(value);
-      value = this.ruleForm.password;
+    let validatePassword = (rule, value, callback) => {
+      ruleForm.password = stripscript(value);
+      value = ruleForm.password;
       if (value === "") {
         callback(new Error("请输入密码"));
       } else if (validatePass(value)) {
@@ -114,16 +115,16 @@ export default {
     /**
      * 校验重复密码
      */
-    var validatePasswords = (rule, value, callback) => {
+    let validatePasswords = (rule, value, callback) => {
       // 如果模块值为login，验证直接通过
-      if (this.model === "login") {
+      if (model.value === "login") {
         callback();
       }
-      this.ruleForm.passwords = stripscript(value);
-      value = this.ruleForm.passwords;
+      ruleForm.passwords = stripscript(value);
+      value = ruleForm.passwords;
       if (value === "") {
         callback(new Error("请再次输入密码"));
-      } else if (value != this.ruleForm.password) {
+      } else if (value != ruleForm.password) {
         callback(new Error("两次密码输入不一致!"));
       } else {
         callback();
@@ -132,7 +133,7 @@ export default {
     /**
      * 校验验证码
      */
-    var validateCode = (rule, value, callback) => {
+    let validateCode = (rule, value, callback) => {
       if (!value) {
         return callback(new Error("验证码不能为空"));
       } else if (validateVCode(value)) {
@@ -141,21 +142,33 @@ export default {
         callback();
       }
     };
+
+    //表单数据
+    const ruleForm = reactive({
+      username: "",
+      password: "",
+      passwords: "",
+      code: "",
+    });
+    // 表单数据的校验规则
+    const rules = reactive({
+      username: [{ validator: validateUsername, trigger: "blur" }],
+      password: [{ validator: validatePassword, trigger: "blur" }],
+      passwords: [{ validator: validatePasswords, trigger: "blur" }],
+      code: [{ validator: validateCode, trigger: "blur" }],
+    });
+
     return {
-      ruleForm: {
-        username: "",
-        password: "",
-        passwords: "",
-        code: "",
-      }, // 表单的数据
-      rules: {
-        username: [{ validator: validateUsername, trigger: "blur" }],
-        password: [{ validator: validatePassword, trigger: "blur" }],
-        passwords: [{ validator: validatePasswords, trigger: "blur" }],
-        code: [{ validator: validateCode, trigger: "blur" }],
-      }, // 表单数据的校验规则
+      ruleForm,
+      rules,
+      validateUsername,
+      validatePassword,
+      validatePasswords,
+      validateCode,
     };
   },
+
+  data() {},
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {

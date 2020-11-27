@@ -4,7 +4,7 @@ import request from "@/api/request.js";
  * 获取验证码
  */
 export function GetSms(data) {
-    request.request({
+    return request.request({
         method: 'post',
         url: '/getSms/',
         data
@@ -18,7 +18,23 @@ export function GetSms(data) {
  * 登录
  */
 
+export function Login(data) {
+    return request({
+        method: 'post',
+        url: '/login/',
+        data
+    })
+}
+
 
 /**
  * 注册
  */
+
+export function Register(data) {
+    return request.request({
+        method: 'post',
+        url: '/register/',
+        data
+    })
+}

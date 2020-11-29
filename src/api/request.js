@@ -11,7 +11,10 @@ const request = axios.create({
     timeout: 15000,
 });
 
-// 添加请求拦截器
+/**
+ * 请求接口前，做一些数据处理
+ * 添加请求拦截器
+ * */ 
 request.interceptors.request.use(config => {
     // 在发送之前做些什么
     return config;
@@ -19,7 +22,10 @@ request.interceptors.request.use(config => {
     return Promise.reject(error)
 });
 
-// 添加响应拦截器
+/**
+ * 请求接口，返回数据进行拦截
+ * 添加响应拦截器
+ * */
 request.interceptors.response.use(response => {
     // 对相应数据做点什么
     let data = response.data;

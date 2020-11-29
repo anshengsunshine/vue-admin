@@ -94,6 +94,7 @@
   </div>
 </template>
 <script>
+import sha1 from "js-sha1";
 import { GetSms, Register, Login } from "@/api/login";
 import { reactive, ref, onMounted } from "@vue/composition-api";
 import {
@@ -187,6 +188,14 @@ export default {
     // 倒计时
     const timer = ref(null);
 
+    /**
+     * 修改按钮验证状态
+     */
+    const UpdataBtnStatus = (params) => {
+      codeBtnStatus.status = params.status;
+      codeBtnStatus.text = params.text;
+    };
+
     // 表单数据的校验规则
     const rules = reactive({
       username: [{ validator: validateUsername, trigger: "blur" }],
@@ -220,8 +229,9 @@ export default {
         time--;
         if (time === 0) {
           clearInterval(timer.value);
-          codeBtnStatus.status = false;
-          codeBtnStatus.text = "再次获取";
+          // codeBtnStatus.status = false;
+          // codeBtnStatus.text = "再次获取";
+          UpdataBtnStatus({status:false, text:"再次获取"});
         }
         codeBtnStatus.text = `倒计时${time}秒`;
       }, 1000);
@@ -232,8 +242,9 @@ export default {
      */
     const clearCountDown = () => {
       // 还原验证码按钮默认状态
-      codeBtnStatus.status = false;
-      codeBtnStatus.text = "获取验证码";
+      // codeBtnStatus.status = false;
+      // codeBtnStatus.text = "获取验证码";
+      UpdataBtnStatus({ status: false, text: "获取验证码" });
       // 清除倒计时
       clearInterval(timer.value);
     };
@@ -255,9 +266,11 @@ export default {
         username: ruleForm.username,
         module: model.value,
       };
+
       //修改获取验证码的按钮状态
-      codeBtnStatus.status = true;
-      codeBtnStatus.text = "发送中";
+      // codeBtnStatus.status = true;
+      // codeBtnStatus.text = "发送中";
+      UpdataBtnStatus({ status: true, text: "发送中" });
       setTimeout(() => {
         GetSms(requestData)
           .then((res) => {
@@ -313,7 +326,7 @@ export default {
     const register = () => {
       let requestData = {
         username: ruleForm.username,
-        password: ruleForm.password,
+        password: sha1(ruleForm.password),
         code: ruleForm.code,
         module: "register",
       };
@@ -345,11 +358,12 @@ export default {
       toggleMenu,
       submitForm,
       getSms,
+      UpdataBtnStatus,
     };
   },
 };
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 #login {
   height: 100vh;
   background-color: #344a5f;

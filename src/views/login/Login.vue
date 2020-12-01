@@ -231,7 +231,7 @@ export default {
           clearInterval(timer.value);
           // codeBtnStatus.status = false;
           // codeBtnStatus.text = "再次获取";
-          UpdataBtnStatus({status:false, text:"再次获取"});
+          UpdataBtnStatus({ status: false, text: "再次获取" });
         }
         codeBtnStatus.text = `倒计时${time}秒`;
       }, 1000);
@@ -315,7 +315,10 @@ export default {
       };
       Login(requestData)
         .then((res) => {
-          console.log(res);
+          // 页面跳转
+          root.$router.push({
+            name: "Console",
+          });
         })
         .catch((err) => {});
     };

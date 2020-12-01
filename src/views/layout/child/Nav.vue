@@ -12,10 +12,10 @@
       router
     >
       <template v-for="(item, index) in routers">
-        <el-submenu v-if="!item.hidden" :key="item.id" :index="index">
+        <el-submenu v-if="!item.hidden" :key="item.id" :index="index + ''">
           <!-- 一级菜单 -->
           <template slot="title">
-            <i class="el-icon-location"></i>
+            <svg-icon :iconClass="item.meta.icon" :className="item.meta.icon" />
             <span slot="title">{{ item.meta.name }}</span>
           </template>
 
@@ -70,5 +70,9 @@ export default {
   width: $navMenu;
   height: 100vh;
   background-color: #344a5f;
+  svg {
+    margin-right: 10px;
+    font-size: 20px;
+  }
 }
 </style>

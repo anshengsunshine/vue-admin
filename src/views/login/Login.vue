@@ -313,14 +313,26 @@ export default {
         password: ruleForm.password,
         code: ruleForm.code,
       };
-      Login(requestData)
+      root.$store
+        .dispatch("login", requestData)
         .then((res) => {
+          console.log(res);
           // 页面跳转
           root.$router.push({
             name: "Console",
           });
         })
-        .catch((err) => {});
+        .catch((err) => {
+          console.log(err);
+        });
+      // Login(requestData)
+      //   .then((res) => {
+      //     // 页面跳转
+      //     root.$router.push({
+      //       name: "Console",
+      //     });
+      //   })
+      //   .catch((err) => {});
     };
 
     /**

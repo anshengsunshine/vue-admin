@@ -314,7 +314,7 @@ export default {
         code: ruleForm.code,
       };
       root.$store
-        .dispatch("login", requestData)
+        .dispatch("app/login", requestData)
         .then((res) => {
           console.log(res);
           // 页面跳转

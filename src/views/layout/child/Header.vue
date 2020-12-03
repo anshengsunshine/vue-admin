@@ -6,8 +6,9 @@
     <div class="pull_right">
       <div class="user_info pull_left">
         <img src="@/assets/images/face.jpg" />
+        {{ username }}
       </div>
-      <div class="header_icon pull_left">
+      <div class="header_icon pull_left" @click="exit">
         <svg-icon iconClass="exit" className="exit" />
       </div>
     </div>
@@ -19,12 +20,22 @@ import { computed } from "@vue/composition-api";
 export default {
   name: "Header",
   setup(props, { root }) {
-    console.log(root.$store.state);
-
+    const username = computed(() => root.$store.state.app.username);
     const navMenuState = () => root.$store.commit("app/SET_Collapse");
+
+    // 退出
+    const exit = () => {
+      root.$store.dispatch("app/exit").then((res) => {
+        root.$router.push({
+          name: "Login",
+        });
+      });
+    };
 
     return {
       navMenuState,
+      username,
+      exit,
     };
   },
 };

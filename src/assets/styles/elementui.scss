@@ -45,3 +45,46 @@ li.el-submenu {
         background-color: $mainColor !important;
     }
 }
+
+/* table样式 */
+div.el-table {
+
+    td,
+    th {
+        text-align: center;
+    }
+
+    th {
+        font-weight: bold;
+        color: #344a5f;
+    }
+
+    td {
+        font-size: 14px;
+    }
+}
+
+/* 弹出窗 dialog样式 */
+.el-dialog__body {
+    padding: 30px 47px !important;
+    .el-textarea__inner{
+        height: 100% !important;
+    }
+}
+
+.el-dialog__footer {
+    padding-bottom: 50px !important;
+    text-align: center !important;
+
+    .el-button {
+        width: 150px;
+        margin: 0 11px !important;
+    }
+}
+
+/* from样式 */
+.el-form {
+    .el-form-item:last-child {
+        margin-bottom: 0 !important;
+    }
+}

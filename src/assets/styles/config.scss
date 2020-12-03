@@ -16,3 +16,16 @@ $navColor:#344a5f;
     -ms-#{$type}: $value;
     #{$type}: $value;
 }
+
+@mixin labelDom($align, $width, $line-height:"normal") {
+    label {
+        float: left;
+        line-height: $line-height + px;
+        width: $width + px;
+        text-align: $align;
+    }
+
+    .wrap_content {
+        margin-left: $width + px;;
+    }
+}

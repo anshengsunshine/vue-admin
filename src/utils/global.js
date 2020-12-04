@@ -1,5 +1,6 @@
 import {
-    MessageBox
+    MessageBox,
+    Message
 } from "element-ui"
 
 export default {
@@ -15,7 +16,7 @@ export default {
                     params.fn && params.fn(params.id)
                 })
                 .catch(() => {
-                    root.$message({
+                    Message({
                         type: "info",
                         message: "已取消删除",
                     });

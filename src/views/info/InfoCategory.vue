@@ -1,50 +1,64 @@
 <template>
   <div id="category">
-    <el-button type="danger">添加一级分类</el-button>
+    <el-button type="danger" @click="addFirst">添加一级分类</el-button>
     <hr class="hr_e9e9e9" />
 
     <el-row :gutter="30">
       <el-col :span="8">
         <div class="category_wrap">
-          <div class="category">
+          <div
+            class="category"
+            v-for="firstItem in category.item"
+            :key="firstItem.id"
+          >
             <h4>
               <svg-icon icon-class="plus"></svg-icon>
-              新闻
+              {{ firstItem.category_name }}
               <div class="button_group">
                 <el-button size="mini" type="danger" round>编辑</el-button>
                 <el-button size="mini" type="success" round>添加子级</el-button>
                 <el-button size="mini" round>删除</el-button>
               </div>
             </h4>
-            <ul>
-              <li>
-                国内
+            <ul v-if="firstItem.children">
+              <li
+                v-for="childrenItem in firstItem.children"
+                :key="childrenItem.id"
+              >
+                {{ childrenItem.category_name }}
                 <div class="button_group">
                   <el-button size="mini" type="danger" round>编辑</el-button>
                   <el-button size="mini" round>删除</el-button>
                 </div>
               </li>
-              <li>国内</li>
-              <li>国内</li>
-              <li>国内</li>
-              <li>国内</li>
-              <li>国内</li>
-              <li>国内</li>
             </ul>
           </div>
         </div>
       </el-col>
       <el-col :span="16">
         <h4 class="menu_title">一级分类编辑</h4>
-        <el-form label-width="142px" class="form_wrap">
-          <el-form-item label="一级分类名称：">
+        <el-form label-width="142px" class="form_wrap" ref="categoryForm">
+          <el-form-item
+            label="一级分类名称："
+            prop="categoryName"
+            v-if="category_first_input"
+          >
             <el-input v-model="form.categoryName"></el-input>
           </el-form-item>
-          <el-form-item label="二级分类名称：">
+          <el-form-item
+            label="二级分类名称："
+            prop="setCategoryName"
+            v-if="category_children_input"
+          >
             <el-input v-model="form.secCategoryName"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="danger" @click="submit">确定</el-button>
+            <el-button
+              type="danger"
+              @click="submit"
+              :loading="submit_btn_loading"
+              >确定</el-button
+            >
           </el-form-item>
         </el-form>
       </el-col>
@@ -53,30 +67,103 @@
 </template>
 
 <script>
-import { AddFristCategory } from "@/api/info";
+import { AddFristCategory, GetCategory } from "@/api/info";
 import { reactive, ref, onMounted, watch } from "@vue/composition-api";
 export default {
   name: "InfoCategory",
-  setup(props) {
+  setup(props, { root, refs }) {
+    /**
+     * reactive
+     */
     const form = reactive({
       categoryName: "",
       secCategoryName: "",
     });
 
+    const category = reactive({
+      item: [],
+    });
+
+    /**
+     * ref
+     */
+    const category_first_input = ref(true);
+    const category_children_input = ref(true);
+    const submit_btn_loading = ref(false);
+
     /**
      * methods
      */
     const submit = () => {
+      if (!form.categoryName) {
+        root.$message({
+          message: "分类名称不能为空",
+          type: "error",
+        });
+        return false;
+      }
+      // 按钮加载状态
+      submit_btn_loading.value = true;
       AddFristCategory({ categoryName: form.categoryName })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
+          let data = res.data;
+          if (data.resCode === 0) {
+            root.$message({
+              message: data.message,
+              type: "success",
+            });
+            category.item.push(res.data.data);
+          }
+          submit_btn_loading.value = false;
+          //  refs.categoryForm.resetFields();
+          form.categoryName = "";
+          form.secCategoryName = "";
         })
-        .catch((err) => {});
+        .catch((err) => {
+          submit_btn_loading.value = false;
+          // refs.categoryForm.resetFields();
+          form.categoryName = "";
+          form.secCategoryName = "";
+        });
     };
 
+    const addFirst = () => {
+      category_first_input.value = true;
+      category_children_input.value = false;
+    };
+
+    const getCategory = () => {
+      GetCategory({})
+        .then((res) => {
+          // console.log(res)
+          let data = res.data.data.data;
+          category.item = data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    /**
+     * 生命周期-DOM挂载完成后执行
+     */
+    onMounted(() => {
+      getCategory();
+    });
+
     return {
+      //ref
+      category_first_input,
+      category_children_input,
+      submit_btn_loading,
+      //reactive
       form,
+      category,
+      //methods
       submit,
+      addFirst,
+      getCategory,
     };
   },
 };

@@ -25,3 +25,14 @@ export function AddFristCategory(data) {
         data
     })
 }
+
+/**
+ * 获取分类
+ */
+export function GetCategory(data) {
+    return request.request({
+        method: "post",
+        url: "/news/getCategory/",
+        data
+    })
+}

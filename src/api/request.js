@@ -2,6 +2,7 @@ import axios from "axios"
 import {
     Message
 } from 'element-ui';
+import { getToken,getUsername } from "@/utils/app.js"
 
 // 创建axios，赋值变量
 const BASEURL = process.env.NODE_ENV === 'production' ? '' : '/devApi';
@@ -17,6 +18,11 @@ const request = axios.create({
  * */ 
 request.interceptors.request.use(config => {
     // 在发送之前做些什么
+
+    config.headers['Token'] = getToken();
+    config.headers['UserName'] = getUsername();
+
+
     return config;
 }, error => {
     return Promise.reject(error)

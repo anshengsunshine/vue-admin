@@ -36,3 +36,14 @@ export function GetCategory(data) {
         data
     })
 }
+
+/**
+ * 删除分类
+*/
+export function DelCatgory(data){
+    return request.request({
+        method:"post",
+        url:"/news/deleteCategory",
+        data
+    })
+}

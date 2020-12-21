@@ -6,25 +6,18 @@
     <el-row :gutter="30">
       <el-col :span="8">
         <div class="category_wrap">
-          <div
-            class="category"
-            v-for="firstItem in category.item"
-            :key="firstItem.id"
-          >
+          <div class="category" v-for="firstItem in category.item" :key="firstItem.id">
             <h4>
               <svg-icon icon-class="plus"></svg-icon>
               {{ firstItem.category_name }}
               <div class="button_group">
                 <el-button size="mini" type="danger" round>编辑</el-button>
                 <el-button size="mini" type="success" round>添加子级</el-button>
-                <el-button size="mini" round>删除</el-button>
+                <el-button size="mini" round @click="delCategoryComfirm(firstItem.id)">删除</el-button>
               </div>
             </h4>
             <ul v-if="firstItem.children">
-              <li
-                v-for="childrenItem in firstItem.children"
-                :key="childrenItem.id"
-              >
+              <li v-for="childrenItem in firstItem.children" :key="childrenItem.id">
                 {{ childrenItem.category_name }}
                 <div class="button_group">
                   <el-button size="mini" type="danger" round>编辑</el-button>
@@ -38,27 +31,19 @@
       <el-col :span="16">
         <h4 class="menu_title">一级分类编辑</h4>
         <el-form label-width="142px" class="form_wrap" ref="categoryForm">
-          <el-form-item
-            label="一级分类名称："
-            prop="categoryName"
-            v-if="category_first_input"
-          >
-            <el-input v-model="form.categoryName"></el-input>
+          <el-form-item label="一级分类名称：" prop="categoryName" v-if="category_first_input">
+            <el-input v-model="form.categoryName" :disabled="category_first_disables"></el-input>
           </el-form-item>
-          <el-form-item
-            label="二级分类名称："
-            prop="setCategoryName"
-            v-if="category_children_input"
-          >
-            <el-input v-model="form.secCategoryName"></el-input>
+          <el-form-item label="二级分类名称：" prop="setCategoryName" v-if="category_children_input">
+            <el-input v-model="form.secCategoryName" :disabled="category_children_disables"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button
               type="danger"
               @click="submit"
               :loading="submit_btn_loading"
-              >确定</el-button
-            >
+              :disabled="submit_btn_disabled"
+            >确定</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -67,21 +52,27 @@
 </template>
 
 <script>
-import { AddFristCategory, GetCategory } from "@/api/info";
+import { AddFristCategory, GetCategory, DelCatgory } from "@/api/info";
 import { reactive, ref, onMounted, watch } from "@vue/composition-api";
+import { global } from "@/utils/global_V3.0.js";
 export default {
   name: "InfoCategory",
   setup(props, { root, refs }) {
+    /**
+     * global
+     */
+    const { confirm } = global();
+
     /**
      * reactive
      */
     const form = reactive({
       categoryName: "",
-      secCategoryName: "",
+      secCategoryName: ""
     });
 
     const category = reactive({
-      item: [],
+      item: []
     });
 
     /**
@@ -90,6 +81,9 @@ export default {
     const category_first_input = ref(true);
     const category_children_input = ref(true);
     const submit_btn_loading = ref(false);
+    const category_first_disables = ref(true);
+    const category_children_disables = ref(true);
+    const submit_btn_disabled = ref(true);
 
     /**
      * methods
@@ -98,20 +92,20 @@ export default {
       if (!form.categoryName) {
         root.$message({
           message: "分类名称不能为空",
-          type: "error",
+          type: "error"
         });
         return false;
       }
       // 按钮加载状态
       submit_btn_loading.value = true;
       AddFristCategory({ categoryName: form.categoryName })
-        .then((res) => {
+        .then(res => {
           // console.log(res);
           let data = res.data;
           if (data.resCode === 0) {
             root.$message({
               message: data.message,
-              type: "success",
+              type: "success"
             });
             category.item.push(res.data.data);
           }
@@ -120,7 +114,7 @@ export default {
           form.categoryName = "";
           form.secCategoryName = "";
         })
-        .catch((err) => {
+        .catch(err => {
           submit_btn_loading.value = false;
           // refs.categoryForm.resetFields();
           form.categoryName = "";
@@ -131,16 +125,38 @@ export default {
     const addFirst = () => {
       category_first_input.value = true;
       category_children_input.value = false;
+      category_first_disables.value = false;
+      submit_btn_disabled.value = false;
     };
 
     const getCategory = () => {
       GetCategory({})
-        .then((res) => {
+        .then(res => {
           // console.log(res)
           let data = res.data.data.data;
           category.item = data;
         })
-        .catch((err) => {
+        .catch(err => {
+          console.log(err);
+        });
+    };
+ 
+    const delCategoryComfirm = categoryID => {
+
+      confirm({
+        content:"确认删除",
+        tip:"警告",
+        fn:confimDelete,
+        id:"222"
+      })
+
+
+
+      DelCatgory({ categoryId: categoryID })
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
           console.log(err);
         });
     };
@@ -157,6 +173,9 @@ export default {
       category_first_input,
       category_children_input,
       submit_btn_loading,
+      category_first_disables,
+      category_children_disables,
+      submit_btn_disabled,
       //reactive
       form,
       category,
@@ -164,8 +183,9 @@ export default {
       submit,
       addFirst,
       getCategory,
+      delCategory
     };
-  },
+  }
 };
 </script>
 

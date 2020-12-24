@@ -1,21 +1,28 @@
 <template>
   <div id="category">
-    <el-button type="danger" @click="addFirst">添加一级分类</el-button>
+    <el-button type="danger" @click="addFirst({ type: 'category_first_add' })">添加一级分类</el-button>
     <hr class="hr_e9e9e9" />
 
     <el-row :gutter="30">
       <el-col :span="8">
         <div class="category_wrap">
           <div class="category" v-for="firstItem in category.item" :key="firstItem.id">
+            <!-- 一级分类 -->
             <h4>
               <svg-icon icon-class="plus"></svg-icon>
               {{ firstItem.category_name }}
               <div class="button_group">
-                <el-button size="mini" type="danger" round>编辑</el-button>
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="editCategory({ data: firstItem, type: 'category_first_edit'})"
+                  round
+                >编辑</el-button>
                 <el-button size="mini" type="success" round>添加子级</el-button>
                 <el-button size="mini" round @click="delCategoryComfirm(firstItem.id)">删除</el-button>
               </div>
             </h4>
+            <!-- 子级分类 -->
             <ul v-if="firstItem.children">
               <li v-for="childrenItem in firstItem.children" :key="childrenItem.id">
                 {{ childrenItem.category_name }}
@@ -52,7 +59,12 @@
 </template>
 
 <script>
-import { AddFristCategory, GetCategory, DelCatgory } from "@/api/info";
+import {
+  AddFristCategory,
+  GetCategory,
+  DelCatgory,
+  EditCatgory
+} from "@/api/info";
 import { reactive, ref, onMounted, watch } from "@vue/composition-api";
 import { global } from "@/utils/global_V3.0.js";
 export default {
@@ -72,23 +84,35 @@ export default {
     });
 
     const category = reactive({
-      item: []
+      item: [],
+      current: []
     });
 
     /**
      * ref
      */
+    const submit_btn_type = ref("");
     const category_first_input = ref(true);
     const category_children_input = ref(true);
     const submit_btn_loading = ref(false);
     const category_first_disables = ref(true);
     const category_children_disables = ref(true);
     const submit_btn_disabled = ref(true);
+    const deleteId = ref("");
 
     /**
      * methods
      */
     const submit = () => {
+      if (submit_btn_type.value == "category_first_add") {
+        addFirstCategory();
+      }
+      if (submit_btn_type.value == "category_first_edit") {
+        editFirstCategory();
+      }
+    };
+
+    const addFirstCategory = () => {
       if (!form.categoryName) {
         root.$message({
           message: "分类名称不能为空",
@@ -122,7 +146,8 @@ export default {
         });
     };
 
-    const addFirst = () => {
+    const addFirst = params => {
+      submit_btn_type.value = params.type;
       category_first_input.value = true;
       category_children_input.value = false;
       category_first_disables.value = false;
@@ -140,25 +165,73 @@ export default {
           console.log(err);
         });
     };
- 
+
+    // 删除
     const delCategoryComfirm = categoryID => {
-
+      deleteId.value = categoryID;
       confirm({
-        content:"确认删除",
-        tip:"警告",
-        fn:confimDelete,
-        id:"222"
-      })
-
-
-
-      DelCatgory({ categoryId: categoryID })
+        content: "确认删除",
+        tip: "警告",
+        fn: deleteCategory,
+        data() {
+          id: "222";
+        }
+      });
+    };
+    const deleteCategory = () => {
+      DelCatgory({ categoryId: deleteId.value })
         .then(res => {
-          console.log(res);
+          // console.log(res);
+          // let index = category.item.findIndex(
+          //   item => item.id == deleteId.value
+          // );
+          // category.item.splice(index, 1);
+          // console.log(index);
+          let newData = category.item.filter(item => item.id != deleteId.value);
+          category.item = newData;
         })
         .catch(err => {
           console.log(err);
         });
+    };
+
+    //修改
+    const editCategory = params => {
+      submit_btn_type.value = params.type;
+      category_children_input.value = false;
+      category_first_disables.value = false;
+      submit_btn_disabled = false;
+      // 一级名称输入还原名称
+      form.categoryName = param.data.category_name;
+      // 储存当前数据对象
+      category.current = param.data;
+    };
+
+    const editFirstCategory = () => {
+      if (category.current.length == 0) {
+        root.$message({
+          message: "未选择分类",
+          type: "error"
+        });
+        return false;
+      }
+
+      let requestDate = {
+        id: category.current.id,
+        categoryName: form.categoryName
+      };
+      EditCatgory(requestDate).then(res => {
+        let resData = res.data.data.data;
+        root.$message({
+          message: res.data.message,
+          type: "success"
+        });
+
+        category.current.category_name = requestDate.data.data.categoryName;
+        // 清空输入框
+        form.categoryName = "";
+        category.current = [];
+      });
     };
 
     /**
@@ -183,7 +256,7 @@ export default {
       submit,
       addFirst,
       getCategory,
-      delCategory
+      delCategoryComfirm
     };
   }
 };

@@ -1,17 +1,17 @@
 import cookie from "cookie_js"
 
-const adminToken = "admin_token"
+const adminToken = "admin_toKen"
 const usernameKey = "username"
 
 export function getToken() {
     return cookie.get(adminToken)
 }
 
-export function setToken(token) {
-    return cookie.set(adminToken, token)
+export function setToken(toKen) {
+    return cookie.set(adminToken, toKen)
 }
 
-export function removeToken() {
+export function removeToken(toKen) {
     return cookie.remove(adminToken)
 }
 

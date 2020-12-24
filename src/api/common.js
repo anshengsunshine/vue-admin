@@ -1,4 +1,4 @@
-import { GetCategory, GetCategoryAll } from "@/api/info";
+import { GetCategory } from "@/api/info";
 import { reactive } from "@vue/composition-api";
 import service from "@/api/request";
 export function common(){

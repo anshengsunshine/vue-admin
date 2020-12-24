@@ -47,3 +47,14 @@ export function DelCatgory(data){
         data
     })
 }
+
+/**
+ * 修改分类
+*/
+export function EditCatgory(data){
+    return request.request({
+        method:"post",
+        url:"/news/editCategory",
+        data
+    })
+}

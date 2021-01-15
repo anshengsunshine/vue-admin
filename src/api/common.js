@@ -68,7 +68,7 @@ export function loadTableData(params){
     * 
     */
 export function GetCityPicker(data){
-    return service.request({
+    return service.request({ 
         method: "post",
         url: "/cityPicker/",
         data

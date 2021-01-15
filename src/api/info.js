@@ -43,7 +43,7 @@ export function GetCategory(data) {
 export function DelCatgory(data){
     return request.request({
         method:"post",
-        url:"/news/deleteCategory",
+        url:"/news/deleteCategory/",
         data
     })
 }
@@ -54,7 +54,7 @@ export function DelCatgory(data){
 export function EditCatgory(data){
     return request.request({
         method:"post",
-        url:"/news/editCategory",
+        url:"/news/editCategory/",
         data
     })
 }

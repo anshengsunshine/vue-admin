@@ -21,6 +21,7 @@ const mutations = {
 
 const actions = {
     login(content, requestData) {
+        console.log("状态管理------",requestData)
         return new Promise((resolve, reject) => {
             Login(requestData).then(res => {
                 resolve(res)
